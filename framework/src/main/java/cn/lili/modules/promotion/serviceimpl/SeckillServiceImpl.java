@@ -3,6 +3,7 @@ package cn.lili.modules.promotion.serviceimpl;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.map.MapBuilder;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONUtil;
@@ -14,7 +15,6 @@ import cn.lili.modules.promotion.entity.dos.Seckill;
 import cn.lili.modules.promotion.entity.dos.SeckillApply;
 import cn.lili.modules.promotion.entity.dto.search.SeckillSearchParams;
 import cn.lili.modules.promotion.entity.enums.PromotionsApplyStatusEnum;
-import cn.lili.modules.promotion.entity.enums.PromotionsScopeTypeEnum;
 import cn.lili.modules.promotion.entity.vos.SeckillVO;
 import cn.lili.modules.promotion.mapper.SeckillMapper;
 import cn.lili.modules.promotion.service.SeckillApplyService;
@@ -40,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 秒杀活动业务层实现
@@ -132,11 +133,34 @@ public class SeckillServiceImpl extends AbstractPromotionsServiceImpl<SeckillMap
     }
 
     /**
+     * 通用促销更新
+     * 调用顺序:
+     * 1. checkStatus 检查促销状态
+     * 2. checkPromotions 检查促销参数
+     * 3. saveOrUpdate 保存促销信息
+     * 4. updatePromotionGoods 更新促销商品信息
+     * 5. updateEsGoodsIndex 更新商品索引促销信息
+     *
+     * @param promotions 促销信息
+     * @return 是否更新成功
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updatePromotions(Seckill promotions) {
+        this.checkStatus(promotions);
+        this.checkPromotions(promotions);
+        boolean result = this.updateById(promotions);
+        seckillApplyService.updateSeckillApplyTime(promotions);
+        return result;
+    }
+
+    /**
      * 更新商品索引限时抢购信息
      *
      * @param seckill 限时抢购信息
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateEsGoodsSeckill(Seckill seckill, List<SeckillApply> seckillApplies) {
         if (seckillApplies != null && !seckillApplies.isEmpty()) {
             // 更新促销范围
@@ -165,12 +189,11 @@ public class SeckillServiceImpl extends AbstractPromotionsServiceImpl<SeckillMap
      */
     @Override
     public void deleteEsGoodsSeckill(Seckill seckill, List<String> skuIds) {
-        seckill.setScopeType(PromotionsScopeTypeEnum.PORTION_GOODS.name());
-        seckill.setScopeId(ArrayUtil.join(skuIds.toArray(), ","));
+        Map<Object, Object> build = MapBuilder.create().put("promotionKey", this.getPromotionType() + "-" + seckill.getId()).put("scopeId", ArrayUtil.join(skuIds.toArray(), ",")).build();
         //删除商品促销消息
         String destination = rocketmqCustomProperties.getGoodsTopic() + ":" + GoodsTagsEnum.DELETE_GOODS_INDEX_PROMOTIONS.name();
         //发送mq消息
-        rocketMQTemplate.asyncSend(destination, JSONUtil.toJsonStr(seckill), RocketmqSendCallbackBuilder.commonCallback());
+        rocketMQTemplate.asyncSend(destination, JSONUtil.toJsonStr(build), RocketmqSendCallbackBuilder.commonCallback());
     }
 
     @Override
