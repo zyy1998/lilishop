@@ -6,6 +6,8 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ClassLoaderUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import cn.lili.common.aop.annotation.RetryOperation;
+import cn.lili.common.exception.RetryException;
 import cn.lili.event.GoodsCommentCompleteEvent;
 import cn.lili.modules.distribution.entity.dos.DistributionGoods;
 import cn.lili.modules.distribution.entity.dto.DistributionGoodsSearchParams;
@@ -121,6 +123,7 @@ public class GoodsMessageListener implements RocketMQListener<MessageExt> {
     private PromotionGoodsService promotionGoodsService;
 
     @Override
+    @RetryOperation
     public void onMessage(MessageExt messageExt) {
 
         switch (GoodsTagsEnum.valueOf(messageExt.getTags())) {
@@ -137,7 +140,7 @@ public class GoodsMessageListener implements RocketMQListener<MessageExt> {
                     Goods goods = this.goodsService.getById(goodsId);
                     updateGoodsIndex(goods);
                 } catch (Exception e) {
-                    log.error("生成商品索引事件执行异常，商品信息 {}", new String(messageExt.getBody()));
+                    log.error("生成商品索引事件执行异常，商品信息: " + new String(messageExt.getBody()), e);
                 }
                 break;
             case GENERATOR_STORE_GOODS_INDEX:
@@ -145,7 +148,7 @@ public class GoodsMessageListener implements RocketMQListener<MessageExt> {
                     String storeId = new String(messageExt.getBody());
                     this.updateGoodsIndex(storeId);
                 } catch (Exception e) {
-                    log.error("生成店铺商品索引事件执行异常，商品信息 {}", new String(messageExt.getBody()));
+                    log.error("生成店铺商品索引事件执行异常，商品信息: " + new String(messageExt.getBody()), e);
                 }
                 break;
             case UPDATE_GOODS_INDEX_PROMOTIONS:
@@ -171,7 +174,7 @@ public class GoodsMessageListener implements RocketMQListener<MessageExt> {
                     List<Goods> goodsList = goodsService.queryListByParams(searchParams);
                     this.updateGoodsIndex(goodsList);
                 } catch (Exception e) {
-                    log.error("更新商品索引事件执行异常，商品信息 {}", new String(messageExt.getBody()));
+                    log.error("更新商品索引事件执行异常，商品信息: " + new String(messageExt.getBody()), e);
                 }
                 break;
             case UPDATE_GOODS_INDEX_FIELD:
@@ -184,7 +187,7 @@ public class GoodsMessageListener implements RocketMQListener<MessageExt> {
                     Map<String, Object> updateFields = updateIndexFields.get("updateFields", Map.class);
                     goodsIndexService.updateIndex(queryFields, updateFields);
                 } catch (Exception e) {
-                    log.error("更新商品索引事件执行异常，商品信息 {}", new String(messageExt.getBody()));
+                    log.error("更新商品索引事件执行异常，商品信息: " + new String(messageExt.getBody()), e);
                 }
                 break;
             case RESET_GOODS_INDEX:
@@ -193,7 +196,7 @@ public class GoodsMessageListener implements RocketMQListener<MessageExt> {
                     List<EsGoodsIndex> goodsIndices = JSONUtil.toList(goodsIdsJsonStr, EsGoodsIndex.class);
                     goodsIndexService.updateBulkIndex(goodsIndices);
                 } catch (Exception e) {
-                    log.error("重置商品索引事件执行异常，商品信息 {}", new String(messageExt.getBody()));
+                    log.error("重置商品索引事件执行异常，商品信息: " + new String(messageExt.getBody()), e);
                 }
                 break;
             //审核商品
@@ -219,7 +222,7 @@ public class GoodsMessageListener implements RocketMQListener<MessageExt> {
                     }
 
                 } catch (Exception e) {
-                    log.error("删除商品索引事件执行异常，商品信息 {}", new String(messageExt.getBody()));
+                    log.error("删除商品索引事件执行异常，商品信息: " + new String(messageExt.getBody()), e);
                 }
                 break;
             //规格删除
@@ -232,8 +235,10 @@ public class GoodsMessageListener implements RocketMQListener<MessageExt> {
                 try {
                     String storeId = new String(messageExt.getBody());
                     goodsIndexService.deleteIndex(MapUtil.builder(new HashMap<String, Object>()).put("storeId", storeId).build());
+                } catch (RetryException re) {
+                    throw re;
                 } catch (Exception e) {
-                    log.error("删除店铺商品索引事件执行异常，商品信息 {}", new String(messageExt.getBody()));
+                    log.error("删除店铺商品索引事件执行异常，商品信息: " + new String(messageExt.getBody()), e);
                 }
                 break;
             //商品评价
@@ -376,20 +381,18 @@ public class GoodsMessageListener implements RocketMQListener<MessageExt> {
      */
     private void generatorGoodsIndex(Goods goods, List<GoodsSku> goodsSkuList) {
         int skuSource = 100;
+        List<EsGoodsIndex> esGoodsIndices = new ArrayList<>();
         for (GoodsSku goodsSku : goodsSkuList) {
-            EsGoodsIndex esGoodsOld = goodsIndexService.findById(goodsSku.getId());
             EsGoodsIndex goodsIndex = this.settingUpGoodsIndexData(goods, goodsSku);
             goodsIndex.setSkuSource(skuSource--);
             log.info("goodsSku：{}", goodsSku);
-            log.info("esGoodsOld：{}", esGoodsOld);
             //如果商品库存不为0，并且es中有数据
-            if (goodsSku.getQuantity() > 0 && esGoodsOld == null) {
+            if (goodsSku.getQuantity() > 0) {
                 log.info("生成商品索引 {}", goodsIndex);
-                this.goodsIndexService.addIndex(goodsIndex);
-            } else if (goodsSku.getQuantity() > 0 && esGoodsOld != null) {
-                goodsIndexService.updateIndex(goodsIndex);
+                esGoodsIndices.add(goodsIndex);
             }
         }
+        this.goodsIndexService.addIndex(esGoodsIndices);
     }
 
     private EsGoodsIndex settingUpGoodsIndexData(Goods goods, GoodsSku goodsSku) {
