@@ -100,12 +100,12 @@ public class StoreFlowServiceImpl extends ServiceImpl<StoreFlowMapper, StoreFlow
             storeFlow.setOrderPromotionType(item.getPromotionType());
             //格式化订单价格详情
             PriceDetailDTO priceDetailDTO = JSONUtil.toBean(item.getPriceDetail(), PriceDetailDTO.class);
-            //站点优惠券佣金
-            storeFlow.setSiteCouponCommission(priceDetailDTO.getSiteCouponCommission());
+            //站点优惠券比例=最大比例(100)-店铺承担比例
+            storeFlow.setSiteCouponPoint(CurrencyUtil.sub(100,priceDetailDTO.getSiteCouponPoint()));
             //平台优惠券 使用金额
             storeFlow.setSiteCouponPrice(priceDetailDTO.getSiteCouponPrice());
-            //站点优惠券佣金比例
-            storeFlow.setSiteCouponPoint(priceDetailDTO.getSiteCouponPoint());
+            //站点优惠券佣金（站点优惠券承担金额=优惠券金额 * (站点承担比例/100)）
+            storeFlow.setSiteCouponCommission(CurrencyUtil.mul(storeFlow.getSiteCouponPrice(),CurrencyUtil.div(storeFlow.getSiteCouponPoint(),100)));
 
             /**
              * @TODO 计算平台佣金
@@ -141,6 +141,7 @@ public class StoreFlowServiceImpl extends ServiceImpl<StoreFlowMapper, StoreFlow
             this.save(storeFlow);
         }
     }
+
 
     /**
      * 店铺订单退款流水
