@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * 定时执行配置
+ * 目前只有敏感词的更新使用到了定时任务
  *
  * @author Chopper
  * @version v1.0
@@ -19,6 +20,9 @@ public class QuartzConfig {
         return JobBuilder.newJob(SensitiveQuartz.class).withIdentity("sensitiveQuartz").storeDurably().build();
     }
 
+    /**
+     * 一小时更新一次敏感词列表
+     */
     @Bean
     public Trigger sensitiveQuartzTrigger() {
         SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.simpleSchedule()

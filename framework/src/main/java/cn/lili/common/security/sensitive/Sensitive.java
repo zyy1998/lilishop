@@ -11,7 +11,9 @@ import java.lang.annotation.Target;
 
 
 /**
- * 敏感注解
+ * 敏感注解，可注解在字段上
+ * 在使用Jackson反序列化的时候可以根据敏感注解决定是否对信息进行脱敏处理
+ * @see SensitiveJsonSerializer
  *
  * @author liushuai(liushuai711 @ gmail.com)
  * @version v4.0

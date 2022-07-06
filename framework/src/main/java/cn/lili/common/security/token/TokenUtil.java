@@ -45,10 +45,12 @@ public class TokenUtil {
         //访问token
         String accessToken = createToken(username, claim, tokenProperties.getTokenExpireTime());
 
+        // 把整个JWT token带上前缀后作为key存入缓存中，失效时间跟jwt失效时间保持一致
         cache.put(CachePrefix.ACCESS_TOKEN.getPrefix(userEnums) + accessToken, 1,
                 tokenProperties.getTokenExpireTime(), TimeUnit.MINUTES);
         //刷新token生成策略：如果是长时间有效的token（用于app），则默认15天有效期刷新token。如果是普通用户登录，则刷新token为普通token2倍数
         Long expireTime = longTerm ? 15 * 24 * 60L : tokenProperties.getTokenExpireTime() * 2;
+        // 生成的刷新token比原token时间长，当原token失效时，用户可以拿着刷新token换取新的token
         String refreshToken = createToken(username, claim, expireTime);
 
         cache.put(CachePrefix.REFRESH_TOKEN.getPrefix(userEnums) + refreshToken, 1, expireTime, TimeUnit.MINUTES);
@@ -86,8 +88,7 @@ public class TokenUtil {
         //获取是否长期有效的token
         boolean longTerm = authUser.getLongTerm();
 
-
-        //如果缓存中有刷新token &&
+        // 如果缓存中有刷新token则可以换取新的登录token，否则登录失败，需要重新登录
         if (cache.hasKey(CachePrefix.REFRESH_TOKEN.getPrefix(userEnums) + oldRefreshToken)) {
             Token token = new Token();
             //访问token

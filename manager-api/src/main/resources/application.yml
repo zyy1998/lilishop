@@ -191,7 +191,7 @@ lili:
   lbs:
     key: 4BYBZ-7MT6S-PUAOA-6BNWL-FJUD7-UUFXT
     sk: zhNKVrJK6UPOhqIjn8AQvG37b9sz6
-  #域名
+  #域名，这个域名会用在联合登陆的回调中 @see cn.lili.modules.connect.util.ConnectUtl#callback
   domain:
     pc: https://pc.b2b2c.pickmall.cn
     wap: https://m.b2b2c.pickmall.cn

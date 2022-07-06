@@ -104,7 +104,7 @@ public class ConnectUtil {
         //缓存写入登录结果，300秒有效
         cache.put(CachePrefix.CONNECT_RESULT.getPrefix() + callback.getCode(), resultMessage, 300L);
 
-        //跳转地址
+        // 根据用户使用的设备是否是移动设备决定跳转地址
         String url = this.check(httpServletRequest.getHeader("user-agent")) ?
                 domainProperties.getWap() + "/pages/passport/login?state=" + callback.getCode() :
                 domainProperties.getPc() + "/login?state=" + callback.getCode();

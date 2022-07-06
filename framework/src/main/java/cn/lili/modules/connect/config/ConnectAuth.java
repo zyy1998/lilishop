@@ -36,6 +36,8 @@ public interface ConnectAuth {
 
     /**
      * 取消授权的api
+     * 从java1.8以后，接口中也可以写函数体
+     * https://stackoverflow.com/questions/22713652/can-an-interface-method-have-a-body
      *
      * @return url
      */

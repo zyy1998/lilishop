@@ -7,6 +7,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
+ * 登录后的用户都有这个实例
  * @author Chopper
  */
 @Data

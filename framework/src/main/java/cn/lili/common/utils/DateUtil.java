@@ -42,6 +42,7 @@ public class DateUtil {
      */
     public static Date startOfTodDayTime(Date date) {
         Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
@@ -52,7 +53,7 @@ public class DateUtil {
     /**
      * 当天的开始时间
      *
-     * @return 今天开始时间
+     * @return 今天开始时间戳
      */
     public static long startOfTodDay() {
         Calendar calendar = Calendar.getInstance();

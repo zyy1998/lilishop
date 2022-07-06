@@ -132,6 +132,11 @@ public class StringUtils extends StrUtil {
      * 如果给定字符串{@code str}中不包含{@code appendStr}，则在{@code str}后追加{@code appendStr}；
      * 如果已包含{@code appendStr}，则在{@code str}后追加{@code otherwise}
      *
+     * 比如要给url添加query param，base url是www.xx.com，想要加一个k=v，
+     * 原先url可能为www.xx.com?kk=vv，那么再加k=v应该是www.xx.com?kk=vv&k=v，也就是加了"&k=v"
+     * 否则应该是www.xx.com?k=v，即加了"?k=v"
+     * @see UrlBuilder#build(boolean) 
+     *
      * @param str       给定的字符串
      * @param appendStr 需要追加的内容
      * @param otherwise 当{@code appendStr}不满足时追加到{@code str}后的内容
@@ -162,8 +167,7 @@ public class StringUtils extends StrUtil {
 
     /**
      * double 转价格字符串
-     *
-     * @return
+     * @see CurrencyUtil#fen
      */
     public static String toFen(Double doubleValue) {
         String str = doubleValue.toString();

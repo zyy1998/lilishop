@@ -30,6 +30,11 @@ public class OperationalJudgment {
     /**
      * 需要判定的对象必须包含属性 memberId，storeId 代表判定的角色
      *
+     * 比如从数据库中取出一个订单，如果当前用户是管理员，那么可以操作。
+     * 如果当前用户是会员，那么判断订单里面的会员id（也就是买家id）"memberId"是否跟当前登录用户的id相同，相同的话可以进行订单操作。
+     * 同样，如果当前用户是商家，那么只有订单里面的商家id跟登录用户的id相同时才可以对订单进行操作。
+     * @see cn.lili.modules.order.order.entity.dos.Order#memberId
+     *
      * @param object 判定对象
      * @param buyerIdField 买家id
      * @param storeIdField 店铺id

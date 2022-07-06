@@ -56,6 +56,7 @@ public class AuthChecker {
 
     /**
      * 校验回调传回的code
+     * 这个校验好像是假的，只是校验了code存不存在，没校验是否跟我发的code一致
      * <p>
      * {@code v1.10.0}版本中改为传入{@code source}和{@code callback}，对于不同平台使用不同参数接受code的情况统一做处理
      *

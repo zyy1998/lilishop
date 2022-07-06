@@ -32,7 +32,7 @@ public class GlobalControllerExceptionHandler {
     static Integer MAX_LENGTH = 200;
 
     /**
-     * 自定义异常
+     * 用于处理自定义异常，即ServiceException类型的自定义异常
      *
      * @param e
      * @return
@@ -75,6 +75,9 @@ public class GlobalControllerExceptionHandler {
         return ResultUtil.error(ResultCode.ERROR.code(), errorMsg);
     }
 
+    /**
+     * 用于处理运行时异常，不是业务级别的异常
+     */
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ResultMessage<Object> runtimeExceptionHandler(HttpServletRequest request, final Exception e, HttpServletResponse response) {

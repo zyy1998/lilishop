@@ -33,6 +33,8 @@ import java.util.Map;
 
 /**
  * HttpClientUtils
+ * 这个类在本项目里应用不多，可被HttpUtils取代
+ * @see HttpUtils
  *
  * @author Bulbasaur
  * @since 2021/7/9 1:40 上午

@@ -39,6 +39,7 @@ public class IpHelper {
     /**
      * 获取IP返回地理信息
      *
+     * @see https://lbs.qq.com/service/webService/webServiceGuide/webServiceIp
      * @param request 请求参数
      * @return 城市信息
      */

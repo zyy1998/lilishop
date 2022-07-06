@@ -15,7 +15,7 @@ import javax.crypto.SecretKey;
  */
 public class SecretKeyUtil {
     public static SecretKey generalKey() {
-        //自定义
+        //这里的base64解码出来不是个可读的字符串
         byte[] encodedKey = Base64.decodeBase64("cuAihCz53DZRjZwbsGcZJ2Ai6At+T142uphtJMsk7iQ=");
         javax.crypto.SecretKey key = Keys.hmacShaKeyFor(encodedKey);
         return key;

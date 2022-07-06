@@ -31,13 +31,15 @@ public class AuthConfig {
     private String clientSecret;
 
     /**
-     * 登录成功后的回调地址
+     * 提供给第三方的,登录成功后的回调地址，这个地址是我方的服务，一般只能是域名不能是ip
+     * @see cn.lili.modules.connect.util.AuthChecker#checkConfig(AuthConfig, ConnectAuth)
      */
     private String redirectUri;
 
     /**
-     * 支付宝公钥：当选择支付宝登录时，该值可用
+     * 支付宝公钥：当选择支付宝登录时，该值必须得有
      * 对应“RSA2(SHA256)密钥”中的“支付宝公钥”
+     * @see cn.lili.modules.connect.util.AuthChecker#isSupportedAuth(AuthConfig, ConnectAuth)
      */
     private String alipayPublicKey;
 

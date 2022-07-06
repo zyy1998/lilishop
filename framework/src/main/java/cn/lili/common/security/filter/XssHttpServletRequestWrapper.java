@@ -136,6 +136,7 @@ public class XssHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
     /**
      * 获取输入流
+     * 从流中取出字符流进行xss过滤，如果流中没有字符则无需过滤
      *
      * @return 过滤后的输入流
      * @throws IOException 异常信息

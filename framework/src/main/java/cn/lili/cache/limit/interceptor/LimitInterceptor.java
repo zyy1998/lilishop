@@ -30,6 +30,10 @@ import java.io.Serializable;
 public class LimitInterceptor {
     private RedisTemplate<String, Serializable> redisTemplate;
 
+    /**
+     * 通过使用lua脚本操作redis进行限流
+     * @see cn.lili.cache.script.LuaScript#limitScript
+     */
     private DefaultRedisScript<Long> limitScript;
 
     @Autowired
@@ -59,6 +63,7 @@ public class LimitInterceptor {
         }
         ImmutableList<String> keys = ImmutableList.of(StringUtils.join(limitPointAnnotation.prefix(), key));
         try {
+            // 执行脚本"script/limit.lua"
             Number count = redisTemplate.execute(limitScript, keys, limitCount, limitPeriod);
             log.info("限制请求{}, 当前请求{},缓存key{}", limitCount, count.intValue(), key);
             //如果缓存里没有值，或者他的值小于限制频率

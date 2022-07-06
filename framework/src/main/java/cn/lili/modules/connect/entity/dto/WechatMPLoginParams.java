@@ -15,7 +15,8 @@ public class WechatMPLoginParams {
      * uuid 用户uuid
      * code 微信返回code 用于与微信交互获取openid 等信息
      * encryptedData 微信返回加密信息
-     * iv 微信返回
+     * iv 微信返回，用于AES解密用户信息的偏移量
+     * @see cn.lili.modules.connect.serviceimpl.ConnectServiceImpl#getUserInfo
      * image 微信头像
      * nickname 微信用户昵称
      */

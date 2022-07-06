@@ -62,7 +62,7 @@ public class SensitiveJsonSerializer extends JsonSerializer<String>
     }
 
     /**
-     * 是否需要脱敏处理
+     * 根据登录的用户信息判断是否需要脱敏处理
      *
      * @return
      */

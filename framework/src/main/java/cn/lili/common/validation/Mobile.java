@@ -23,6 +23,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Constraint(validatedBy = {MobileValidator.class})
 public @interface Mobile {
 
+    /**
+     * @see cn.lili.common.utils.RegularUtil#MOBILE
+     */
     String regexp() default "";
 
     String message() default "电话号码格式不正确";

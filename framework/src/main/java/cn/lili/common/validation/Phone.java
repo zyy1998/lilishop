@@ -22,6 +22,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Constraint(validatedBy = {PhoneValidator.class})
 public @interface Phone {
 
+    /**
+     * @see cn.lili.common.utils.RegularUtil#MOBILE
+     */
     String regexp() default "1[3|4|5|7|8]\\d{9}";
 
     String message() default "手机号码格式不正确";

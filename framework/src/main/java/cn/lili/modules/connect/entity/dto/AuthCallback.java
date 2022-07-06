@@ -1,5 +1,7 @@
 package cn.lili.modules.connect.entity.dto;
 
+import cn.lili.modules.connect.config.AuthConfig;
+import cn.lili.modules.connect.config.ConnectAuth;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,6 +28,7 @@ public class AuthCallback implements Serializable {
 
     /**
      * 访问AuthorizeUrl后回调时带的参数auth_code，该参数目前只使用于支付宝登录
+     * @see cn.lili.modules.connect.util.AuthChecker#checkCode(ConnectAuth, AuthCallback) 
      */
     private String authCode;
 

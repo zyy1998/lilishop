@@ -24,7 +24,7 @@ public class BeanUtil {
 
 
     /**
-     * 获取属性名数组
+     * 反射获取属性名数组
      *
      * @param o 获取字段的对象
      * @return 返回各个字段
@@ -49,7 +49,7 @@ public class BeanUtil {
     }
 
     /**
-     * 根据属性名获取属性值
+     * 通过反射根据属性名获取属性值
      *
      * @param fieldName 属性名
      * @param o         对象

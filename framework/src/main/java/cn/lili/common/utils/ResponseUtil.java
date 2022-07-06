@@ -63,7 +63,7 @@ public class ResponseUtil {
     }
 
     /**
-     * response 输出JSON
+     * 向response中输出JSON
      *
      * @param response
      * @param resultMap
@@ -92,7 +92,7 @@ public class ResponseUtil {
     /**
      * 构造响应
      *
-     * @param flag
+     * @param flag 是否响应成功
      * @param code
      * @param msg
      * @return
@@ -104,7 +104,7 @@ public class ResponseUtil {
     /**
      * 构造响应
      *
-     * @param flag
+     * @param flag 是否响应成功
      * @param code
      * @param msg
      * @param data

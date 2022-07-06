@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * 线程配置
+ * 滑动验证码配置
  *
  * @author Chopper
  */

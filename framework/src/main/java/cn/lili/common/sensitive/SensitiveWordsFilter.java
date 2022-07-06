@@ -43,9 +43,10 @@ public class SensitiveWordsFilter implements Serializable {
 
 
     /**
-     * 过滤铭感次
+     * 过滤敏感词，默认使用*填充敏感词
+     * 会员昵称和商品咨询都会过滤
      *
-     * @param sentence 过滤赐予
+     * @param sentence 过滤词语
      * @return
      */
     public static String filter(String sentence) {

@@ -5,6 +5,9 @@ import java.util.regex.Pattern;
 
 /**
  * 用户名验证工具类
+ * 项目里没有用到，项目中都是通过注解实现的校验
+ * @see cn.lili.common.validation.Phone
+ *
  * @author Chopper
  */
 public class RegularUtil {

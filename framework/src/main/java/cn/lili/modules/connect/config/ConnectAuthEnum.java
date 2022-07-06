@@ -3,6 +3,7 @@ package cn.lili.modules.connect.config;
 
 /**
  * 用户信息 枚举
+ * 如果使用枚举实现接口，那么每个枚举变量都要实现接口中的所有方法
  *
  * @author Chopper
  * @version v4.0

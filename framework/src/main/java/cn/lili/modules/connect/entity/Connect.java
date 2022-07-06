@@ -39,7 +39,7 @@ public class Connect extends BaseIdEntity {
     @ApiModelProperty(value = "创建时间", hidden = true)
     private Date createTime;
 
-    @ApiModelProperty("用户id")
+    @ApiModelProperty("本系统中的用户id")
     private String userId;
 
     @ApiModelProperty("联合登录id")

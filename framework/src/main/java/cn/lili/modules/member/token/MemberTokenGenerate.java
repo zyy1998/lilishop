@@ -34,6 +34,10 @@ public class MemberTokenGenerate extends AbstractTokenGenerate<Member> {
     @Autowired
     private RocketMQTemplate rocketMQTemplate;
 
+    /**
+     * 只有用户登录的时候才会调用此方法
+     * 调用此方法会发送MQ和存缓存
+     */
     @Override
     public Token createToken(Member member, Boolean longTerm) {
 
@@ -53,11 +57,12 @@ public class MemberTokenGenerate extends AbstractTokenGenerate<Member> {
         //记录最后登录时间，客户端类型
         member.setLastLoginDate(new Date());
         member.setClientEnum(clientTypeEnum.name());
+        // 在创建token的时候把会员登录的信息发送到rocketMQ，不怎么合理
         String destination = rocketmqCustomProperties.getMemberTopic() + ":" + MemberTagsEnum.MEMBER_LOGIN.name();
         rocketMQTemplate.asyncSend(destination, member, RocketmqSendCallbackBuilder.commonCallback());
 
         AuthUser authUser = new AuthUser(member.getUsername(), member.getId(), member.getNickName(), member.getFace(), UserEnums.MEMBER);
-        //登陆成功生成token
+        //登陆成功生成token(调用此方法会将token存入缓存)
         return tokenUtil.createToken(member.getUsername(), authUser, longTerm, UserEnums.MEMBER);
     }
 

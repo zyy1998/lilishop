@@ -31,6 +31,7 @@ public class UserContext {
     public static AuthUser getCurrentUser() {
         if (RequestContextHolder.getRequestAttributes() != null) {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+            // accessToken中包含了有关用户的所有信息，客户端每次请求时都需携带该token
             String accessToken = request.getHeader(SecurityEnum.HEADER_TOKEN.getValue());
             return getAuthUser(accessToken);
         }
@@ -78,14 +79,15 @@ public class UserContext {
     }
 
     /**
-     * 根据jwt获取token重的用户信息
+     * 根据jwt获取token中的用户信息
      *
      * @param accessToken token
      * @return 授权用户
      */
     public static AuthUser getAuthUser(String accessToken) {
         try {
-            //获取token的信息
+            //获取token的信息,claims实际是个map,可以从key为"userContext"中取出AuthUser的json信息
+            // jwt使用了一串固定的base64加密,解密时也用这个key
             Claims claims
                     = Jwts.parser()
                     .setSigningKey(SecretKeyUtil.generalKeyByDecoders())

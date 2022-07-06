@@ -9,6 +9,7 @@ import java.util.Base64.Decoder;
 
 /**
  * base64转为multipartFile工具类
+ * 主要用于滑块验证
  *
  * @author Chopper
  */
@@ -99,6 +100,10 @@ public class Base64DecodeMultipartFile implements MultipartFile {
         return stream;
     }
 
+    /**
+     * 从inputstream中读取数据，将其转化为base64，这样做的目的可以将其存入redis中
+     * @see cn.lili.modules.verification.service.impl.VerificationServiceImpl#getInputStream(String)
+     */
     public static String inputStreamToStream(InputStream in) {
         byte[] data = null;
         //读取图片字节数组

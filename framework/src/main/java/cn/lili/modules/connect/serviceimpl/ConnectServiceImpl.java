@@ -80,7 +80,7 @@ public class ConnectServiceImpl extends ServiceImpl<ConnectMapper, Connect> impl
             if (connect == null) {
                 throw new NoPermissionException("未绑定用户");
             }
-            //查询会员
+            //根据联合登录id查询本系统会员id
             Member member = memberService.getById(connect.getUserId());
             //如果未绑定会员，则把刚才查询到的联合登录表数据删除
             if (member == null) {
@@ -102,6 +102,10 @@ public class ConnectServiceImpl extends ServiceImpl<ConnectMapper, Connect> impl
             token = this.unionLoginCallback(type, authUser.getUuid(), uuid, false);
         } catch (NoPermissionException e) {
             if (AUTO_REGION) {
+                /**
+                 * 自动注册
+                 * @see cn.lili.modules.member.serviceimpl.MemberServiceImpl#autoRegister(ConnectAuthUser)
+                 */
                 token = memberService.autoRegister(authUser);
                 return token;
             } else {
@@ -138,6 +142,10 @@ public class ConnectServiceImpl extends ServiceImpl<ConnectMapper, Connect> impl
         this.remove(queryWrapper);
     }
 
+    /**
+     * 当前登录用户绑定的第三方账号列表
+     * @return
+     */
     @Override
     public List<String> bindList() {
         LambdaQueryWrapper<Connect> queryWrapper = new LambdaQueryWrapper<>();
