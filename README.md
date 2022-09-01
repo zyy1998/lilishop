@@ -159,3 +159,24 @@ PS：手机验证码为 ‘111111’
 ##### 官方qq 1群 961316482（已满）
 ##### 官方qq 2群 875294241
 
+
+### 开发环境
+如果maven加载依赖时出现错误，很有可能是因为下载过程中出了问题，这个问题困扰我很久，一直以为可能源代码的依赖就有问题。
+看[stackoverflow](https://stackoverflow.com/questions/23581194/the-pom-for-name-is-invalid-transitive-dependencies-if-any-will-not-be-avai)有关该问题的解决方法，最好的方法不是直接把本地仓库直接删除，而是使用`mvn dependency:tree -X`检查出错的地方，把相应的包删除，再重新运行该命令即可。
+
+### DemoSite功能是如何实现的
+在Controller层加上`@DemoSite`注解，在[cn.lili.common.aop.interceptor.DemoInterceptor](cn.lili.common.aop.interceptor.DemoInterceptor)中会判断是否在配置中设置了demosiete，如果设置了那么就直接抛出服务异常，异常会被全局捕获，controller层代码不执行直接返回异常信息给前端。
+
+### 参数校验是如何实现的
+使用`javax.validation.Valid`进行参数校验，在`cn.lili.common.exception.GlobalControllerExceptionHandler`中配置了校验未通过的全局异常处理。
+
+如果校验的注解，如`@NotNull`是写在实体类中的，那么在controller方法里需加`@Valid`注解。但是如果是直接写在Controller层的接口参数中时,需要在该方法的Controller类上添加`@Validated`。
+
+这个项目中的很多Controller都没有加`@Validated`，所以直接在方法上写的`@NotNull`都不会生效。
+![valid](./assets/README-1662025885260.png)
+![valid2](./assets/README-1662026100966.png)
+
+
+https://blog.csdn.net/web18296061989/article/details/124762094
+
+
